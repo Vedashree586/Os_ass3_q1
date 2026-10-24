@@ -1,0 +1,66 @@
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int block[5] = {100, 500, 200, 300, 600};
+    int process[4] = {212, 417, 112, 426};
+
+    for (int type = 1; type <= 3; type++) {
+        int b[5], alloc[4];
+        int count = 0, free = 0, total = 0;
+
+        for (int i = 0; i < 5; i++)
+            b[i] = block[i];
+
+        for (int i = 0; i < 4; i++)
+            alloc[i] = -1;
+
+        cout << "\n";
+        if (type == 1) cout << "First Fit\n";
+        if (type == 2) cout << "Best Fit\n";
+        if (type == 3) cout << "Worst Fit\n";
+
+        cout << "Process\tSize\tBlock\n";
+
+        for (int i = 0; i < 4; i++) {
+            int pos = -1;
+
+            for (int j = 0; j < 5; j++) {
+                if (b[j] >= process[i]) {
+                    if (type == 1) {
+                        pos = j;
+                        break;
+                    }
+                    if (type == 2 && (pos == -1 || b[j] < b[pos]))
+                        pos = j;
+                    if (type == 3 && (pos == -1 || b[j] > b[pos]))
+                        pos = j;
+                }
+            }
+
+            if (pos != -1) {
+                alloc[i] = pos;
+                b[pos] -= process[i];
+                count++;
+                cout << "P" << i + 1 << "\t"
+                     << process[i] << "\tB" << pos + 1 << "\n";
+            } else {
+                cout << "P" << i + 1 << "\t"
+                     << process[i] << "\tNot Allocated\n";
+            }
+        }
+
+        for (int i = 0; i < 5; i++) {
+            total += block[i];
+            free += b[i];
+        }
+
+        cout << "Allocated Processes: " << count << "\n";
+        cout << "Free Memory: " << free << "\n";
+        cout << "Memory Utilization: "
+             << (total - free) * 100.0 / total << "%\n";
+    }
+
+    return 0;
+}
